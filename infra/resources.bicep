@@ -22,6 +22,18 @@ module appService 'modules/appService.bicep' = {
     location: location
     planId: appServicePlan.outputs.planId
     project: project
+    blueAppSettings: [
+      {
+        name: 'EnvironmentName'
+        value: 'This is the blue version'
+      }
+    ]
+    greenAppSettings: [
+      {
+        name: 'EnvironmentName'
+        value: 'This is the green version'
+      }      
+    ]
   }
 }
 
