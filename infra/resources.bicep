@@ -24,13 +24,13 @@ module appService 'modules/appService.bicep' = {
     project: project
     blueAppSettings: [
       {
-        name: 'EnvironmentName'
+        name: 'EnvironmentLabel'
         value: 'This is the blue version'
       }
     ]
     greenAppSettings: [
       {
-        name: 'EnvironmentName'
+        name: 'EnvironmentLabel'
         value: 'This is the green version'
       }      
     ]
