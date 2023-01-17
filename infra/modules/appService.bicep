@@ -9,13 +9,14 @@ param activeApp string = 'blue'
 param blueAppSettings array = []
 param greenAppSettings array = []
 
-var linuxFxVersion = 'DOTNETCORE:6.0'
+var linuxFxVersion = 'DOTNETCORE|6.0'
 resource app 'Microsoft.Web/sites@2022-03-01' = {
   name: 'app-${project}-${appName}'
   location: location
 
   properties: {
     serverFarmId: planId
+    reserved: true
 
     siteConfig: {
       linuxFxVersion: linuxFxVersion

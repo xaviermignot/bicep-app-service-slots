@@ -5,12 +5,14 @@ resource plan 'Microsoft.Web/serverfarms@2022-03-01' = {
   name: 'asp-${project}'
   location: location
 
-  kind: 'linux'
+  kind: 'app,linux'
+
+  properties: {
+    reserved: true
+  }
 
   sku: {
     name: 'S1'
-    tier: 'Standard'
-    size: 'S1'
   }
 }
 
