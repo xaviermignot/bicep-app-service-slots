@@ -1,0 +1,32 @@
+body {
+    font-family: 'Trebuchet MS', 'Lucida Sans Unicode', 'Lucida Grande', 'Lucida Sans', Arial, sans-serif;
+}
+
+main {
+    background-color: lightblue;
+    border: 2px groove darkblue;
+    border-radius: 10px;
+    width: 600px;
+    margin: 20px 0 0 20px;
+    padding: 10px;
+}
+
+header {
+    text-align: center;
+}
+
+#staging-info {
+    background-color: red;
+    border: 2px groove darkred;
+    border-radius: 10px;
+    font-weight: bold;
+    text-align: center;
+    color: white;
+    margin: 10px 0 0 20px;
+    padding: 1pt 10px;
+    width: 600px;
+}
+
+.config-value {
+    font-style: italic;
+}
