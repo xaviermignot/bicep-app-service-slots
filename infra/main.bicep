@@ -1,8 +1,10 @@
 targetScope = 'subscription'
 
+param location string
 param project string
 
-param location string
+@allowed([ 'blue', 'green' ])
+param activeApp string = 'blue'
 
 resource rg 'Microsoft.Resources/resourceGroups@2022-09-01' = {
   name: 'rg-${project}'
@@ -16,5 +18,9 @@ module resources 'resources.bicep' = {
   params: {
     location: location
     project: project
+    activeApp: activeApp
   }
 }
+
+output rgName string = rg.name
+output appServiceName string = resources.outputs.appServiceName

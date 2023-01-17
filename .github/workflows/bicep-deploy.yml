@@ -1,0 +1,48 @@
+name: Provision Azure resources with Bicep
+
+on:
+  workflow_call:
+    outputs:
+      appServiceName:
+        description: The name of the App Service
+        value: ${{ jobs.provision.outputs.appServiceName }}
+
+defaults:
+  run:
+    working-directory: infra
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+
+    outputs:
+      appServiceName: ${{ steps.bicep-deploy.outputs.appServiceName }}
+
+    permissions:
+      actions: write
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Bicep deploy
+        id: bicep-deploy
+        uses: azure/arm-deploy@v1
+        with:
+          scope: subscription
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          region: ${{ secrets.AZURE_REGION }}
+          template: ./infra/main.bicep
+          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }}
+          deploymentName: apsBicepDemo
+
+      - name: Update GitHub secrets
+        run: |
+          gh secret set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
+          gh secret set APP_NAME --body ${{ steps.bicep-deploy.outputs.appServiceName }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
