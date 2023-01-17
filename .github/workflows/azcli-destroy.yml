@@ -1,0 +1,33 @@
+name: 03 - Destroy Azure resources with Azure CLI
+
+on:
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: infra
+
+jobs:
+  destroy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Delete resource group
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az group delete -g ${{ secrets.RG_NAME }} -y
+
+      - name: Update GitHub secrets
+        run: |
+          gh secret delete APP_NAME
+          gh secret delete RG_NAME
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
