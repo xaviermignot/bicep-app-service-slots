@@ -18,9 +18,6 @@ jobs:
     outputs:
       appServiceName: ${{ steps.bicep-deploy.outputs.appServiceName }}
 
-    permissions:
-      actions: write
-
     steps:
       - uses: actions/checkout@v3
 
