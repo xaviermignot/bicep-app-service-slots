@@ -12,13 +12,13 @@ jobs:
     uses: ./.github/workflows/app-service-deploy.yml
     with:
       appServiceName: ${{ needs.provision-resources.outputs.appServiceName }}
-      # ref: blue
+      ref: blue
     secrets: inherit
-  # deploy-green-app-to-staging:
-  #   needs: provision-resources
-  #   uses: ./.github/workflows/app-service-deploy.yml
-  #   with:
-  #     appServiceName: ${{ needs.provision-resources.outputs.appServiceName }}
-  #     slot: staging
-  #     ref: green
-  #   secrets: inherit
+  deploy-green-app-to-staging:
+    needs: provision-resources
+    uses: ./.github/workflows/app-service-deploy.yml
+    with:
+      appServiceName: ${{ needs.provision-resources.outputs.appServiceName }}
+      slot: staging
+      ref: green
+    secrets: inherit

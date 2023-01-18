@@ -1,22 +1,11 @@
-name: Provision Azure resources with Bicep
+name: 02 - Swap App Service slots using Azure CLI
 
 on:
-  workflow_call:
-    outputs:
-      appServiceName:
-        description: The name of the App Service
-        value: ${{ jobs.provision.outputs.appServiceName }}
-
-defaults:
-  run:
-    working-directory: infra
+  workflow_dispatch:
 
 jobs:
-  provision:
+  swap:
     runs-on: ubuntu-latest
-
-    outputs:
-      appServiceName: ${{ steps.bicep-deploy.outputs.appServiceName }}
 
     steps:
       - uses: actions/checkout@v3
@@ -25,14 +14,20 @@ jobs:
         uses: azure/login@v1
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Swap WebApp
+        uses: azure/CLI@v1
+        with:
+          inlineScript: |
+            az webapp deployment slot swap -g ${{ secrets.RG_NAME }} -n ${{ secrets.APP_NAME }} -s staging
       
-      - name: Determine the version of the app
+      - name: Determine new version of the app
         id: choose-version
         uses: azure/CLI@v1
         with:
           inlineScript: |
             previousVersion=$(az deployment sub show -n apsBicepDemo --query properties.parameters.activeApp.value -o tsv 2>/dev/null)
-            [[ "$previousVersion" == 'green' ]] && versionToUse="green" || versionToUse="blue"
+            [[ "$previousVersion" == 'green' ]] && versionToUse="blue" || versionToUse="green"
             echo "appVersion=$versionToUse" >> $GITHUB_OUTPUT
       
       - name: Bicep deploy
@@ -46,10 +41,3 @@ jobs:
           parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }}
           deploymentName: apsBicepDemo
           activeApp: ${{ steps.choose-version.outputs.appVersion }}
-
-      - name: Update GitHub secrets
-        run: |
-          gh secret set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
-          gh secret set APP_NAME --body ${{ steps.bicep-deploy.outputs.appServiceName }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
