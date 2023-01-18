@@ -43,9 +43,8 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           region: ${{ secrets.AZURE_REGION }}
           template: ./infra/main.bicep
-          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }}
+          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }} activeApp=${{ steps.choose-version.outputs.appVersion }}
           deploymentName: apsBicepDemo
-          activeApp: ${{ steps.choose-version.outputs.appVersion }}
 
       - name: Update GitHub secrets
         run: |
