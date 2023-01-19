@@ -31,7 +31,7 @@ jobs:
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            previousVersion=$(az deployment sub show -n apsBicepDemo --query properties.parameters.activeApp.value -o tsv 2>/dev/null)
+            previousVersion=$(az deployment group show -g ${{ secrets.RG_NAME }} -n deploy-bicep-aps-demo-resources --query properties.parameters.activeApp.value -o tsv 2>/dev/null)
             [[ "$previousVersion" == 'green' ]] && versionToUse="green" || versionToUse="blue"
             echo "appVersion=$versionToUse" >> $GITHUB_OUTPUT
       
