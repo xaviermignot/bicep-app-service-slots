@@ -24,10 +24,3 @@ jobs:
         with:
           inlineScript: |
             az group delete -g ${{ secrets.RG_NAME }} -y
-
-      - name: Update GitHub secrets
-        run: |
-          gh secret delete APP_NAME
-          gh secret delete RG_NAME
-        env:
-          GITHUB_TOKEN: ${{ secrets.GH_PAT }}
