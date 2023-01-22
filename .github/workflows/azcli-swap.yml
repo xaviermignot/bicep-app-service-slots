@@ -29,10 +29,10 @@ jobs:
             previousVersion=$(az deployment group show -g ${{ secrets.RG_NAME }} -n deploy-bicep-aps-demo-resources --query properties.parameters.activeApp.value -o tsv 2>/dev/null)
             [[ "$previousVersion" == 'green' ]] && versionToUse="blue" || versionToUse="green"
             echo "appVersion=$versionToUse" >> $GITHUB_OUTPUT
-      
-      - name: Bicep deploy
-        uses: ./.github/workflows/bicep-deploy.yml
-        with:
-          activeApp: ${{ steps.choose-version.outputs.appVersion }}
-          updateSecrets: false
-        secrets: inherit
+  
+  update-active-app:
+    uses: ./.github/workflows/bicep-deploy.yml
+    with:
+      activeApp: ${{ steps.choose-version.outputs.appVersion }}
+      updateSecrets: false
+    secrets: inherit
