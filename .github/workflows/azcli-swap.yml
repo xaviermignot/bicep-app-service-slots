@@ -7,6 +7,9 @@ jobs:
   swap:
     runs-on: ubuntu-latest
 
+    outputs:
+      appVersion: ${{ steps.choose-version.outputs.appVersion }} 
+
     steps:
       - uses: actions/checkout@v3
 
@@ -32,7 +35,8 @@ jobs:
   
   update-active-app:
     uses: ./.github/workflows/bicep-deploy.yml
+    needs: swap
     with:
-      activeApp: ${{ steps.choose-version.outputs.appVersion }}
+      activeApp: ${{ needs.swap.outputs.appVersion }}
       updateSecrets: false
     secrets: inherit
