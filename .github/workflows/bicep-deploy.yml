@@ -26,15 +26,6 @@ jobs:
         with:
           creds: ${{ secrets.AZURE_CREDENTIALS }}
       
-      # - name: Determine the version of the app
-      #   id: choose-version
-      #   uses: azure/CLI@v1
-      #   with:
-      #     inlineScript: |
-      #       previousVersion=$(az deployment group show -g ${{ secrets.RG_NAME }} -n deploy-bicep-aps-demo-resources --query properties.parameters.activeApp.value -o tsv 2>/dev/null)
-      #       [[ "$previousVersion" == 'green' ]] && versionToUse="green" || versionToUse="blue"
-      #       echo "appVersion=$versionToUse" >> $GITHUB_OUTPUT
-      
       - name: Bicep deploy
         id: bicep-deploy
         uses: azure/arm-deploy@v1
@@ -44,7 +35,6 @@ jobs:
           region: ${{ secrets.AZURE_REGION }}
           template: ./infra/main.bicep
           parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }}
-          # parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }} activeApp=${{ steps.choose-version.outputs.appVersion }}
           deploymentName: apsBicepDemo
 
       - name: Update GitHub secrets
