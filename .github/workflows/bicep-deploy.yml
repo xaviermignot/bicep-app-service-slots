@@ -2,6 +2,13 @@ name: Provision Azure resources with Bicep
 
 on:
   workflow_call:
+    inputs:
+      activeApp: 
+        type: string
+        default: blue
+      updateSecrets:
+        type: boolean
+        default: true
     outputs:
       appServiceName:
         description: The name of the App Service
@@ -34,10 +41,11 @@ jobs:
           subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
           region: ${{ secrets.AZURE_REGION }}
           template: ./infra/main.bicep
-          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }}
+          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }} activeApp=${{ inputs.activeApp }}
           deploymentName: apsBicepDemo
 
       - name: Update GitHub secrets
+        if: ${{ inputs.updateSecrets }}
         run: |
           gh secret set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
           gh secret set APP_NAME --body ${{ steps.bicep-deploy.outputs.appServiceName }}

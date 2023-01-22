@@ -31,12 +31,8 @@ jobs:
             echo "appVersion=$versionToUse" >> $GITHUB_OUTPUT
       
       - name: Bicep deploy
-        id: bicep-deploy
-        uses: azure/arm-deploy@v1
+        uses: ./.github/workflows/bicep-deploy.yml
         with:
-          scope: subscription
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          region: ${{ secrets.AZURE_REGION }}
-          template: ./infra/main.bicep
-          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }} activeApp=${{ steps.choose-version.outputs.appVersion }}
-          deploymentName: apsBicepDemo
+          activeApp: ${{ steps.choose-version.outputs.appVersion }}
+          updateSecrets: false
+        secrets: inherit
