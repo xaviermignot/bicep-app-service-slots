@@ -1,0 +1,53 @@
+name: Provision Azure resources & deploy code in a single workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  provision:
+    runs-on: ubuntu-latest
+    outputs:
+      appServiceName: ${{ steps.bicep-deploy.outputs.appServiceName }}
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+      
+      - name: Bicep deploy
+        id: bicep-deploy
+        uses: azure/arm-deploy@v1
+        with:
+          scope: subscription
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
+          region: ${{ secrets.AZURE_REGION }}
+          template: ./infra/main.bicep
+          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }}
+          deploymentName: apsBicepDemo
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: provision
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Set up .NET Core
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: 6
+
+      - name: dotnet publish
+        run: dotnet publish -c Release -o publish/ApsSlotsDemo.App
+
+      - name: Azure Login
+        uses: azure/login@v1
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy to App Service
+        uses: azure/webapps-deploy@v2
+        with: 
+          app-name: ${{ needs.provision.outputs.appServiceName }} 
+          package: ./src/ApsSlotsDemo.App/publish/ApsSlotsDemo.App
