@@ -41,13 +41,9 @@ jobs:
       - name: dotnet publish
         run: dotnet publish -c Release -o publish/ApsSlotsDemo.App
 
-      - name: Azure Login
-        uses: azure/login@v1
-        with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
-
       - name: Deploy to App Service
         uses: azure/webapps-deploy@v2
         with: 
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
           app-name: ${{ needs.provision.outputs.appServiceName }} 
           package: ./src/ApsSlotsDemo.App/publish/ApsSlotsDemo.App
