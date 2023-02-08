@@ -35,6 +35,8 @@ jobs:
         working-directory: src/ApsSlotsDemo.App
     steps:
       - uses: actions/checkout@v3
+        with:
+          ref: blue
 
       - name: dotnet publish
         run: dotnet publish -c Release -o publish/ApsSlotsDemo.App
