@@ -30,11 +30,6 @@ jobs:
         with:
           ref: ${{ inputs.ref }}
 
-      - name: Set up .NET Core
-        uses: actions/setup-dotnet@v3
-        with:
-          dotnet-version: 6
-
       - name: dotnet publish
         run: dotnet publish -c Release -o publish/ApsSlotsDemo.App
 
