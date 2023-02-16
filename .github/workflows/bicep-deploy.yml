@@ -13,14 +13,6 @@ on:
       appServiceName:
         description: The name of the App Service
         value: ${{ jobs.provision.outputs.appServiceName }}
-  workflow_dispatch:
-    inputs:
-      activeApp: 
-        type: string
-        default: blue
-      updateSecrets:
-        type: boolean
-        default: true
 
 defaults:
   run:
