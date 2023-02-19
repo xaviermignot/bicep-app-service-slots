@@ -1,7 +1,7 @@
 # Azure App Service with Bicep, deployment slots and app settings
 
-This repository contains a demo on how to use Azure Services deployment slots with Bicep (yes, with app settings too !). It is an adaptation of a demo I had previously made using [Terraform](https://github.com/xaviermignot/terraform-app-service-slots)  
-The demo consists in :
+This repository contains a demo on how to use Azure Services deployment slots with Bicep (yes, with app settings too !). It is an adaptation of a demo I had previously made using [Terraform](https://github.com/xaviermignot/terraform-app-service-slots), and it's covered by a series of two posts on my blog [here](https://blog.xmi.fr/posts/app-service-bicep-github-actions/) and [here](https://blog.xmi.fr/posts/bicep-app-service-slots/).  
+The demo consists in:
 - a few Bicep files to provision an App Service and a deployment slot
 - a simple ASP.NET web app
 - GitHub Action workflows to:
