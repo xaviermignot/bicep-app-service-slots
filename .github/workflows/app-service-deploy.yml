@@ -25,6 +25,9 @@ jobs:
       run:
         working-directory: src/ApsSlotsDemo.App
 
+    permissions:
+      id-token: write
+    
     steps:
       - uses: actions/checkout@v3
         with:
@@ -36,7 +39,9 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to App Service
         uses: azure/webapps-deploy@v2

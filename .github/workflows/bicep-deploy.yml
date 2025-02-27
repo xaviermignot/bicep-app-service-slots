@@ -25,29 +25,34 @@ jobs:
     outputs:
       appServiceName: ${{ steps.bicep-deploy.outputs.appServiceName }}
 
+    permissions:
+      id-token: write
+  
     steps:
       - uses: actions/checkout@v3
 
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       
       - name: Bicep deploy
         id: bicep-deploy
         uses: azure/arm-deploy@v1
         with:
           scope: subscription
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          region: ${{ secrets.AZURE_REGION }}
+          subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          region: ${{ vars.AZURE_REGION }}
           template: ./infra/main.bicep
-          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }} activeApp=${{ inputs.activeApp }}
+          parameters: project=bicep-aps-demo location=${{ vars.AZURE_REGION }} activeApp=${{ inputs.activeApp }}
           deploymentName: apsBicepDemo
 
       - name: Update GitHub secrets
         if: ${{ inputs.updateSecrets }}
         run: |
-          gh secret set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
-          gh secret set APP_NAME --body ${{ steps.bicep-deploy.outputs.appServiceName }}
+          gh variable set RG_NAME --body ${{ steps.bicep-deploy.outputs.rgName }}
+          gh variable set APP_NAME --body ${{ steps.bicep-deploy.outputs.appServiceName }}
         env:
           GITHUB_TOKEN: ${{ secrets.GH_PAT }}

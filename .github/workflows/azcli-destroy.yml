@@ -11,16 +11,21 @@ jobs:
   destroy:
     runs-on: ubuntu-latest
 
+    permissions:
+      id-token: write
+
     steps:
       - uses: actions/checkout@v3
 
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Delete resource group
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az group delete -g ${{ secrets.RG_NAME }} -y
+            az group delete -g ${{ vars.RG_NAME }} -y

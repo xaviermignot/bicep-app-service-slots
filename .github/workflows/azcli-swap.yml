@@ -3,33 +3,38 @@ name: 02 - Swap App Service slots using Azure CLI
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+    
 jobs:
   swap:
     runs-on: ubuntu-latest
 
     outputs:
       appVersion: ${{ steps.choose-version.outputs.appVersion }} 
-
+  
     steps:
       - uses: actions/checkout@v3
 
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Swap WebApp
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            az webapp deployment slot swap -g ${{ secrets.RG_NAME }} -n ${{ secrets.APP_NAME }} -s staging
+            az webapp deployment slot swap -g ${{ vars.RG_NAME }} -n ${{ vars.APP_NAME }} -s staging
       
       - name: Determine new version of the app
         id: choose-version
         uses: azure/CLI@v1
         with:
           inlineScript: |
-            previousVersion=$(az deployment group show -g ${{ secrets.RG_NAME }} -n deploy-bicep-aps-demo-resources --query properties.parameters.activeApp.value -o tsv 2>/dev/null)
+            previousVersion=$(az deployment group show -g ${{ vars.RG_NAME }} -n deploy-bicep-aps-demo-resources --query properties.parameters.activeApp.value -o tsv 2>/dev/null)
             [[ "$previousVersion" == 'green' ]] && versionToUse="blue" || versionToUse="green"
             echo "appVersion=$versionToUse" >> $GITHUB_OUTPUT
   

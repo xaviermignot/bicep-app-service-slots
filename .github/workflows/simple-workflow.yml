@@ -3,28 +3,35 @@ name: Provision Azure resources & deploy code in a single workflow
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 jobs:
   provision:
     runs-on: ubuntu-latest
+
     outputs:
       appServiceName: ${{ steps.bicep-deploy.outputs.appServiceName }}
+
     steps:
       - uses: actions/checkout@v3
 
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
       
       - name: Bicep deploy
         id: bicep-deploy
         uses: azure/arm-deploy@v1
         with:
           scope: subscription
-          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION }}
-          region: ${{ secrets.AZURE_REGION }}
+          subscriptionId: ${{ vars.AZURE_SUBSCRIPTION_ID }}
+          region: ${{ vars.AZURE_REGION }}
           template: ./infra/main.bicep
-          parameters: project=bicep-aps-demo location=${{ secrets.AZURE_REGION }}
+          parameters: project=bicep-aps-demo location=${{ vars.AZURE_REGION }}
           deploymentName: apsBicepDemo
 
   deploy:
@@ -44,7 +51,9 @@ jobs:
       - name: Azure Login
         uses: azure/login@v1
         with:
-          creds: ${{ secrets.AZURE_CREDENTIALS }}
+          client-id: ${{ vars.AZURE_CLIENT_ID }}
+          tenant-id: ${{ vars.AZURE_TENANT_ID }}
+          subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
 
       - name: Deploy to App Service
         uses: azure/webapps-deploy@v2

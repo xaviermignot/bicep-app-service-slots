@@ -3,6 +3,9 @@ name: 01 - Initial deployment
 on:
   workflow_dispatch:
 
+permissions:
+  id-token: write
+
 jobs:
   provision-resources:
     uses: ./.github/workflows/bicep-deploy.yml
