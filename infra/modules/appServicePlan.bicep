@@ -12,7 +12,7 @@ resource plan 'Microsoft.Web/serverfarms@2022-03-01' = {
   }
 
   sku: {
-    name: 'S1'
+    name: 'P0V3'
   }
 }
 
